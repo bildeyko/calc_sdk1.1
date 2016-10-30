@@ -154,7 +154,7 @@
             <CpuDllArguments></CpuDllArguments>
             <PeripheralDll></PeripheralDll>
             <PeripheralDllArguments></PeripheralDllArguments>
-            <InitializationFile></InitializationFile>
+            <InitializationFile>.\debugConfig.ini</InitializationFile>
           </SimDlls>
           <TargetDlls>
             <CpuDll></CpuDll>
@@ -382,6 +382,11 @@
               <FileName>mem_ops.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\mem_ops.c</FilePath>
+            </File>
+            <File>
+              <FileName>fixed_point_test.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\fixed_point_test.c</FilePath>
             </File>
           </Files>
         </Group>
