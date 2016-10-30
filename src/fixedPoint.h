@@ -5,8 +5,13 @@
 
 typedef unsigned char byte;
 
-byte xdata * add(byte xdata *first_num, byte xdata *second_num, byte xdata *res);
+extern byte bytes_cnt;
+extern byte point_pos;
 
+byte xdata * add(byte xdata *first_num, byte xdata *second_num, byte xdata *res);
 byte xdata * sub(byte xdata *first_num, byte xdata *second_num, byte xdata *res);
+byte xdata * mul(byte xdata *first_num, byte xdata *second_num, byte xdata *res);
+
+void byte_to_number(byte xdata *ptr, byte val, byte to_negative);
 
 #endif
