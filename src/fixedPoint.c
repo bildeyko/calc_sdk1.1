@@ -5,8 +5,8 @@
 //Low bytes first
 //Negative numbers are represented in twos-complement (inversed positive and +1)
 
-#define BYTES_CNT 16
-#define POINT_POS 2
+#define BYTES_CNT 32
+#define POINT_POS 6
 
 byte bytes_cnt = BYTES_CNT; //count of bytes for number
 byte point_pos = POINT_POS; //point position in number
@@ -81,8 +81,10 @@ byte xdata * pos_mul(byte xdata *first_number, byte xdata *second_number, byte x
 			first = read_data(first_number+i);
 			second = read_data(second_number+j);
 			r = first * second;
-			add_byte(res, i+j, (byte) r);						//add low byte, and high byte of mul to res
-			add_byte(res, i+j+1, (byte)(r>>8));
+			if (i+j >= point_pos) 																//to avoid shift at the end of operation
+				add_byte(res, i+j-point_pos, (byte) r);						//add low byte of mul to res
+			if (i+j >= point_pos - 1)															//to avoid shift at the end of operation
+				add_byte(res, i+j+1-point_pos, (byte)(r>>8));			//add high byte of mul to res
 		}
 	}
 	return res;
@@ -113,9 +115,9 @@ byte xdata * mul(byte xdata *first_number, byte xdata *second_number, byte xdata
 void byte_to_number(byte xdata *ptr, byte val, byte negative){
 	byte i;
 	
-	write_data(ptr, val);
-	for (i = 1; i < bytes_cnt; i++){
+	for (i = 0; i < bytes_cnt; i++){
 		write_data(ptr+i, 0);
 	}
+	write_data(ptr + point_pos, val);
 	if (negative) to_negative(ptr);
 }	

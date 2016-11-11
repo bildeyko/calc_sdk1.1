@@ -12,8 +12,8 @@ char test_add(){
 	byte_to_number(second, 234, 0);
 
 	add(first, second, result);	//must be 357 or 0x165 or 0x6501 (this is in little endian) 
-	a = read_data(result);
-	b = read_data(result+1);
+	a = read_data(result+point_pos);
+	b = read_data(result+1+point_pos);
 	return a==0x65 && b==0x01;
 }
 
@@ -26,13 +26,13 @@ char test_sub(){
 	byte b;
 	
 	byte_to_number(first, 0x65, 0);
-	write_data(first+1, 0x01);
+	write_data(first+point_pos+1, 0x01);
 	byte_to_number(second, 234, 0);
 	byte_to_number(result, 0, 0);
 	
 	sub(first, second, result);	//must be 357 or 0x165 or 0x6501 (this is in little endian) 
-	a = read_data(result);
-	b = read_data(result+1);
+	a = read_data(result+point_pos);
+	b = read_data(result+1+point_pos);
 	return a==123 && b==0x00;
 }
 
@@ -49,8 +49,8 @@ char test_mul(){
 	byte_to_number(result, 0, 0);
 	
 	mul(first, second, result);	//must be 357 or 0x165 or 0x6501 (this is in little endian) 
-	a = read_data(result);
-	b = read_data(result+1);
+	a = read_data(result+point_pos);
+	b = read_data(result+1+point_pos);
 	return a==0x68 && b==0x5b;
 }
 
@@ -67,8 +67,8 @@ char test_mul_neg(){
 	byte_to_number(result, 0, 0);
 	
 	mul(first, second, result);	//must be 357 or 0x165 or 0x6501 (this is in little endian) 
-	a = read_data(result);
-	b = read_data(result+1);
+	a = read_data(result+point_pos);
+	b = read_data(result+1+point_pos);
 	return a==0x6E && b==0xFB;
 }
 

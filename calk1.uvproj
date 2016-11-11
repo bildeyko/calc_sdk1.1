@@ -369,24 +369,39 @@
               <FilePath>.\START_AD.A51</FilePath>
             </File>
             <File>
-              <FileName>main.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\main.c</FilePath>
+              <FileName>fixed_point_test.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\src\fixed_point_test.h</FilePath>
             </File>
             <File>
-              <FileName>fixedPoint.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\fixedPoint.c</FilePath>
+              <FileName>fixedPoint.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\src\fixedPoint.h</FilePath>
             </File>
             <File>
-              <FileName>mem_ops.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\mem_ops.c</FilePath>
+              <FileName>mem_ops.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\src\mem_ops.h</FilePath>
             </File>
             <File>
               <FileName>fixed_point_test.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\fixed_point_test.c</FilePath>
+              <FilePath>.\src\fixed_point_test.c</FilePath>
+            </File>
+            <File>
+              <FileName>fixedPoint.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\fixedPoint.c</FilePath>
+            </File>
+            <File>
+              <FileName>main.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\main.c</FilePath>
+            </File>
+            <File>
+              <FileName>mem_ops.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\mem_ops.c</FilePath>
             </File>
           </Files>
         </Group>
