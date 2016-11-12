@@ -1,5 +1,6 @@
 #include "fixed_point_test.h"
 
+
 //simple test "add two numbers", returns true if passed successfully
 char test_add(){
 	byte xdata *first = 0x0010;
@@ -72,11 +73,14 @@ char test_mul_neg(){
 	return a==0x6E && b==0xFB;
 }
 
+
 char begin_test(){
 	char res = 0xFF;
+	
 	res = res && test_add();
 	res = res && test_sub();
 	res = res && test_mul();
 	res = res && test_mul_neg();
+	
 	return res;
 }
