@@ -1,11 +1,11 @@
 #include "fixed_point_test.h"
 
+	byte xdata *first = 0x0010;
+	byte xdata *second = 0x0030;
+	byte xdata *result = 0x0050;
 
 //simple test "add two numbers", returns true if passed successfully
 char test_add(){
-	byte xdata *first = 0x0010;
-	byte xdata *second = 0x0020;
-	byte xdata *result = 0x0030;
 	byte a;
 	byte b;
 	
@@ -20,9 +20,6 @@ char test_add(){
 
 //simple test "add two numbers", returns true if passed successfully
 char test_sub(){
-	byte xdata *first = 0x0010;
-	byte xdata *second = 0x0020;
-	byte xdata *result = 0x0030;
 	byte a;
 	byte b;
 	
@@ -39,9 +36,6 @@ char test_sub(){
 
 //simple test "mul two numbers", returns true if passed successfully
 char test_mul(){
-	byte xdata *first = 0x0010;
-	byte xdata *second = 0x0020;
-	byte xdata *result = 0x0030;
 	byte a;
 	byte b;
 	
@@ -57,9 +51,6 @@ char test_mul(){
 
 //simple test "mul two numbers", returns true if passed successfully
 char test_mul_neg(){
-	byte xdata *first = 0x0010;
-	byte xdata *second = 0x0020;
-	byte xdata *result = 0x0030;
 	byte a;
 	byte b;
 	
@@ -73,6 +64,37 @@ char test_mul_neg(){
 	return a==0x6E && b==0xFB;
 }
 
+char test_div(){
+	byte a;
+	byte b;
+	
+	byte_to_number(first, 11, 0);
+	write_data(first+point_pos-1, 0x40);
+	byte_to_number(second, 2, 0);
+	write_data(second+point_pos-1, 0x40);
+	byte_to_number(result, 0, 0);
+	
+	div(first, second, result);	//must be 357 or 0x165 or 0x6501 (this is in little endian) 
+	a = read_data(result+point_pos);
+	b = read_data(result+1+point_pos);
+	return a==0x05 && b==0;
+}
+
+char test_div_2(){
+	byte a;
+	byte b;
+	
+	byte_to_number(first, 0x0D , 0);
+	write_data(first+point_pos+1, 0x02);			//525
+	byte_to_number(second, 50, 0);
+	byte_to_number(result, 0, 0);
+	
+	div(first, second, result);	//must be 357 or 0x165 or 0x6501 (this is in little endian) 
+	a = read_data(result+point_pos);
+	b = read_data(result-1+point_pos);
+	return a==0x0A && b==0x80;
+}
+
 
 char begin_test(){
 	char res = 0xFF;
@@ -81,6 +103,8 @@ char begin_test(){
 	res = res && test_sub();
 	res = res && test_mul();
 	res = res && test_mul_neg();
+	res = res && test_div();
+	res = res && test_div_2();
 	
 	return res;
 }

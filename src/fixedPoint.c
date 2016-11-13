@@ -19,7 +19,7 @@ void to_negative(byte xdata *number){
 	for (i = 0; i < bytes_cnt; i++){
 		x = read_data(number+i);
 		x = ~x + carry;							
-		carry = (x == 0) ? 1 : 0;					//if +1 gain 0 than overflow detected
+		carry = (x == 0 && carry == 1) ? 1 : 0;					//if +1 gain 0 than overflow detected
 		write_data(number+i, x);
 	}
 }
@@ -116,14 +116,13 @@ void shift_left(byte xdata *number, byte shift){
 	
 	byte_part = shift>>3;																								//if shift > than 8 set byte_part
 	bit_part = shift & 0x07;																						// 0..7 bit value
-	for(i = bytes_cnt-1; i >= 0; i++){																		//INFO this loop(char i) restrict bytes_cnt value to 127
+	for(i = bytes_cnt-1; i >= 0; i--){																	//INFO this loop(char i) restrict bytes_cnt value to 127
 		read_pos = i - byte_part;
-		if (read_pos <= 0) {																							//if address lower than bytes count of number, fill 0 to rest of the number
-			val = (read_data(number + read_pos) << bit_part) | carry;				//shifted value from memory plus high value from previous byte
+		if (read_pos >= 0) {																							//if address lower than bytes count of number, fill 0 to rest of the number
+			val = read_data(number + read_pos);															//value from memory
 			read_pos -= 1;
-			carry = read_pos < 0 ? 0 : read_data(number + read_pos - 1);
-			write_data(number + i, val | (carry >> (8-bit_part)));					//write to i(current_byte) - byte_part
-			carry = carry&(~(0xFF<<bit_part));																	//set carry the overflowed part of byte
+			carry = read_pos < 0 ? 0 : read_data(number + read_pos);
+			write_data(number + i, val << bit_part | (carry >> (8-bit_part)));			//write to i(current_byte) - byte_part
 		}
 		else write_data(number+i, 0);
 	}
@@ -139,11 +138,10 @@ void shift_right(byte xdata *number, byte shift){
 	bit_part = shift & 0x07;																						
 	for(i = 0; i< bytes_cnt; i++){
 		read_pos = i + byte_part;
-		if (read_pos > bytes_cnt){
-			val = (read_data(number + read_pos) >> bit_part) | carry;
+		if (read_pos < bytes_cnt){
+			val = read_data(number + read_pos);
 			carry = read_pos >= (bytes_cnt - 1) ? 0 : read_data(number + read_pos + 1);
-			write_data(number + i, (val >> bit_part) | (carry << (8-bit_part)));				
-			carry = carry&(~(0xFF>>bit_part));																		
+			write_data(number + i, val >> bit_part | (carry << (8-bit_part)));																				
 		}
 		else write_data(number+i, 0);
 	}
@@ -155,25 +153,26 @@ char compare_numbers(byte xdata *first_number, byte xdata *second_number, byte b
 	byte val1, val2;
 	byte i;
 	
+	bit_pos += 1;
 	val1 = read_data(first_number + byte_pos)&(~(0xFF << bit_pos));
 	val2 = read_data(second_number + byte_pos)&(~(0xFF << bit_pos));
 	len -= bit_pos;
 	if (len < 0){																						//compare only len count of bits
 		val1 = val1 & (0xFF<<(-len));		
-		val1 = val1 & (0xFF<<(-len));		
+		val2 = val2 & (0xFF<<(-len));		
 	}
 	if (val1 < val2)
 		return -1;
 	if (val1 > val2)
-		return -1;
+		return 1;
 
 	
-	for(i = byte_pos - 1; i >= 0; i++){
+	for(i = byte_pos; i > 0; i--){
 		if (len < 0) 
 			return 0;
-		val1 = read_data(first_number + i);
-		val2 = read_data(second_number + i);
-		len = len >> 3;
+		val1 = read_data(first_number + i - 1);
+		val2 = read_data(second_number + i - 1);
+		len -= 8;
 		if (len < 0){																						//compare only len count of bits
 			val1 = val1 & (0xFF<<(-len));		
 			val1 = val1 & (0xFF<<(-len));		
@@ -181,14 +180,14 @@ char compare_numbers(byte xdata *first_number, byte xdata *second_number, byte b
 		if (val1 < val2)
 			return -1;
 		if (val1 > val2)
-			return -1;
+			return 1;
 	}
 	return 0;
 }
 
 char pos_div(byte xdata *first_number, byte xdata *second_number, byte xdata *res){
 	byte i;
-	int j;
+	int j, comp_start;
 	byte first_byte_pos=0, second_byte_pos=0, first_bit_pos = 0, second_bit_pos = 0, tmp, tmp2;
 	
 	//this two "for" cycles finds start positions for div operation
@@ -203,12 +202,14 @@ char pos_div(byte xdata *first_number, byte xdata *second_number, byte xdata *re
 	tmp = read_data(second_number+second_byte_pos);
 	tmp2 = read_data(first_number+first_byte_pos);
 	for(i=0; i<8; i++){
-		if ((tmp = (tmp << i)) & 0x01){
+		if (tmp & 0x01){
 			second_bit_pos = i;
 		}
-		if ((tmp2 = (tmp2 << i)) & 0x01){
+		if (tmp2 & 0x01){
 			first_bit_pos = i;
 		}
+		tmp = tmp >> 1;
+		tmp2 = tmp2 >> 1;
 	}
 	
 	if (second_byte_pos == 0) return 1;						//INVALID, division to 0
@@ -218,13 +219,48 @@ char pos_div(byte xdata *first_number, byte xdata *second_number, byte xdata *re
 	for (i=0; i<=(byte)(j>>8); i++){							//shift divider first '1' byte to dividend first '1' byte
 		shift_left(second_number, (byte)j);
 	}
-	for(j=first_byte_pos*8+first_bit_pos; i>=0; i--){
-		tmp = compare_numbers(first_number, second_number, (byte)j>>3, (byte)j&0x07, (((int)second_byte_pos)<<3)+second_bit_pos);
-		//if divider bigger than dividend write 0, otherwise 1
-		write_data(res + (byte)(j>>3) - point_pos, read_data(res) + (tmp >= 0 ? (tmp << (j & 0x07)) : 0));		
+	j = first_byte_pos*8+first_bit_pos;
+	comp_start = j;
+	for(; j>=0; j--){
+		char cmp;
+		cmp = compare_numbers(first_number, second_number, (byte)(comp_start>>3), (byte)comp_start&0x07, (((int)second_byte_pos)<<3)+second_bit_pos);
+		//if divider bigger than dividend write 1 and sub second number from first
+		if (cmp >= 0){				
+			int write_offset = (j-second_bit_pos+(second_byte_pos-point_pos)*8)>>3;
+			sub(first_number, second_number, first_number);
+			tmp = (j - second_bit_pos) & 0x07;														//set bit to 1
+			tmp = 1 << tmp;
+			tmp = read_data(res + write_offset) | tmp;			//value to write
+			write_data(res + write_offset, tmp);	
+			if (cmp == 0)															//first number is 0 now, return
+				return 0;
+			comp_start = j-1;
+		}	
+		shift_right(second_number, 1);
 	}
 	return 0;
 }
+
+//The div function can change input numbers
+//Invert number to positive value, if it is negative
+//Convert result to negative value, if only one input number is negative
+byte xdata * div(byte xdata *first_number, byte xdata *second_number, byte xdata * res){
+	byte neg_res = 0;
+	
+	if (first_number[bytes_cnt-1]&0x7F){ 
+		neg_res = ~neg_res;
+		to_negative(first_number);
+	}
+	if (second_number[bytes_cnt-1]&0x7F){ 
+		neg_res = ~neg_res;
+		to_negative(second_number);
+	}
+	pos_div(first_number, second_number, res);
+	if (neg_res)
+		to_negative(res);
+	return res;
+}
+
 
 
 //set byte value "val" to number at pointer "ptr", set other number bytes to 0
