@@ -260,3 +260,40 @@ bit t = CurPosCtrl;
     SwitchCurPosControl(t);
 }
 
+void LCD_print(unsigned char* s, bit y, char last_position)
+{
+	char x, len = 16, start, offset;
+	unsigned char ch;	
+	bit t = CurPosCtrl;
+
+	SwitchCurPosControl(1);
+	
+	if(last_position < len) 
+	{
+		start = len - 1 - last_position;
+		offset = last_position - len + 1;
+	}
+	else
+	{
+		start = 1;
+		offset = last_position - len - 1;
+	}
+	
+	cur_y = y;
+	for(x=1; x<len; x++)
+	{
+		cur_x = x;
+		if(CurPosCtrl)
+        LCD_GotoXY(cur_x,cur_y);
+		
+		if(x >= start)
+			ch = s[offset+x];
+		else
+			ch = ' ';
+		
+		WriteMax(DATA_IND,ch);
+    Strobe(0xC);	
+	}
+	
+	SwitchCurPosControl(t);
+}

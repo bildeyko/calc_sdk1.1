@@ -33,4 +33,6 @@ extern void LCD_SwitchCursor(bit cursor,bit blink);
 extern void LCD_GotoXY(unsigned char x,bit y);
 extern void LCD_Type(char *s);
 
+extern void LCD_print(unsigned char* s, bit y, char last_position);
+
 #endif //_LCD_H
