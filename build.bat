@@ -11,7 +11,7 @@ set inc=..\include_c51
 
 set path=%WINDIR%\COMMAND;%CDIR%\bin;%UTILS%;%path%
 
-rem call clean.bat
+call clean.bat
 
 If Not Exist .\bin (
 	MD bin
