@@ -1,6 +1,8 @@
 #include "mem_ops.h"
+#include "aduc812.h"
 
 #define MAXBASE 0 
+//#define MAXBASE 8
 
 void write_data (unsigned char xdata *ptr, unsigned char val){
 	unsigned char oldDPP = DPP;

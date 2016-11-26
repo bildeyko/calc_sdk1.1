@@ -25,5 +25,19 @@
 
 Listings/
 Objects/
+bin/
 
 *.msg
+*.asm
+*.rel
+*.rst
+*.sym
+*.lst 
+*.hex
+*.bin
+*.map
+*.mem
+*.lnk
+pm3p_*.txt
+com?_log.txt
+*.gz

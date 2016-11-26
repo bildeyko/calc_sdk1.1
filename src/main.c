@@ -2,11 +2,12 @@
 #include "mem_ops.h"
 #include "fixed_point_test.h"
 #include "calc.h"
+#include "lcd.h"
 
 void calc();
 
 void main(){
-	begin_test();
+	//begin_test();
 	calc();
 }
 
