@@ -21,7 +21,6 @@
 *.iex
 .#*
 *.uvgui.*
-*.uvopt
 
 Listings/
 Objects/
