@@ -7,8 +7,8 @@
 void calc();
 
 void main(){
-	//begin_test();
-	calc();
+	begin_test();
+	//calc();
 }
 
 void calc() {

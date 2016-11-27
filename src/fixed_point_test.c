@@ -3,6 +3,7 @@
 	byte xdata *first = 0x0010;
 	byte xdata *second = 0x0030;
 	byte xdata *result = 0x0050;
+	byte xdata *str = 0x0100;
 
 //simple test "add two numbers", returns true if passed successfully
 char test_add(){
@@ -95,6 +96,40 @@ char test_div_2(){
 	return a==0x0A && b==0x80;
 }
 
+char test_number_from_string(){
+	byte a;
+	byte b;
+	
+	write_data(str, '1');
+	write_data(str+1, '2');
+	write_data(str+2, '3');
+	write_data(str+3, '4');
+
+	byte_to_number(result, 0, 0);
+	number_from_string(result, first, second, str, 4);
+	a = read_data(result+point_pos);
+	b = read_data(result+point_pos+1);
+	return a==0xD2 && b==0x04;
+}
+
+char test_number_from_string2(){
+	byte a;
+	byte b;
+	
+	write_data(str, '5');
+	write_data(str+1, '6');
+	write_data(str+2, '7');
+	write_data(str+3, '1');
+	write_data(str+4, '.');
+	write_data(str+5, '5');
+
+	byte_to_number(result, 0, 0);
+	number_from_string(result, first, second, str, 6);
+	a = read_data(result+point_pos);
+	b = read_data(result+point_pos+1);
+	return a==0xD2 && b==0x04;
+}
+
 
 char begin_test(){
 	char res = 0xFF;
@@ -105,6 +140,8 @@ char begin_test(){
 	res = res && test_mul_neg();
 	res = res && test_div();
 	res = res && test_div_2();
+	res = res && test_number_from_string();
+	res = res && test_number_from_string2();
 	
 	return res;
 }

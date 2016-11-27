@@ -1,5 +1,6 @@
 #include "fixedPoint.h"
 #include "mem_ops.h"
+#include <string.h>
 
 //DOC
 //Low bytes first
@@ -75,15 +76,18 @@ byte xdata * pos_mul(byte xdata *first_number, byte xdata *second_number, byte x
 	unsigned int r;
 	byte first, second;
 	
+	memset(res, 0, bytes_cnt);
 	for (i = 0; i < bytes_cnt; i++){
 		for (j = 0; j < bytes_cnt; j++){
 			first = read_data(first_number+i);
 			second = read_data(second_number+j);
-			r = first * second;
-			if (i+j >= point_pos) 																//to avoid shift at the end of operation
-				add_byte(res, i+j-point_pos, (byte) r);						//add low byte of mul to res
-			if (i+j >= point_pos - 1)															//to avoid shift at the end of operation
-				add_byte(res, i+j+1-point_pos, (byte)(r>>8));			//add high byte of mul to res
+			if (first|second) {																		//if operands are 0 next cycle
+				r = first * second;
+				if (i+j >= point_pos) 																//to avoid shift at the end of operation
+					add_byte(res, i+j-point_pos, (byte) r);						//add low byte of mul to res
+				if (i+j >= point_pos - 1)															//to avoid shift at the end of operation
+					add_byte(res, i+j+1-point_pos, (byte)(r>>8));			//add high byte of mul to res
+			}
 		}
 	}
 	return res;
@@ -190,6 +194,7 @@ char pos_div(byte xdata *first_number, byte xdata *second_number, byte xdata *re
 	int j, comp_start;
 	byte first_byte_pos=0, second_byte_pos=0, first_bit_pos = 0, second_bit_pos = 0, tmp, tmp2;
 	
+	memset(res, 0, bytes_cnt);									//forse set result to 0
 	//this two "for" cycles finds start positions for div operation
 	for(i=0; i<bytes_cnt; i++){												
 		if (read_data(first_number+i)){
@@ -234,7 +239,7 @@ char pos_div(byte xdata *first_number, byte xdata *second_number, byte xdata *re
 			write_data(res + write_offset, tmp);	
 			if (cmp == 0)															//first number is 0 now, return
 				return 0;
-			comp_start = j-1;
+			comp_start = comp_start-1;//j-1;
 		}	
 		shift_right(second_number, 1);
 	}
@@ -247,6 +252,7 @@ char pos_div(byte xdata *first_number, byte xdata *second_number, byte xdata *re
 byte xdata * div(byte xdata *first_number, byte xdata *second_number, byte xdata * res){
 	byte neg_res = 0;
 	
+	memset(res, 0, bytes_cnt);
 	if (first_number[bytes_cnt-1]&0x7F){ 
 		neg_res = ~neg_res;
 		to_negative(first_number);
@@ -275,8 +281,8 @@ void byte_to_number(byte xdata *ptr, byte val, byte negative){
 	if (negative) to_negative(ptr);
 }	
 
-void number_from_string(byte xdata * res, byte xdata * tmp1, byte xdata *tmp2, char xdata * str, byte len){
-	byte i=0, val, str_point_pos;
+byte number_from_string(byte xdata * res, byte xdata * tmp1, byte xdata *tmp2, char xdata * str, byte len){
+	byte i=0, val, str_point_pos=len;
 	char is_negative = 0;
 	
 	if (read_data(str) == '-') {								//if first symbol is 0, set is_negative = true
@@ -289,16 +295,21 @@ void number_from_string(byte xdata * res, byte xdata * tmp1, byte xdata *tmp2, c
 	for (i=i+1; i<len; i++){										//parse integer part of number
 		val = read_data(str+i);
 		if (val == '.'){													//if symbol is '.' store position and break operation
-			str_point_pos = i;												
+			str_point_pos = i;	
+			continue;
 		}
 		mul(tmp1, tmp2, res);											//multiply to 10, store result to res
-		add_byte(res, 0, read_data(str+i)-48);		//add next symbol value to res
+		add_byte(res, point_pos, val-48);					//add next symbol value to res
+		memcpy(tmp1, res, bytes_cnt);							//copy result to tmp1 for next multiply
 	}
 	
-	for (i = point_pos; i<len; i++){						//parse fractional part of number
-			//pos_div(res, 
+	for (i = str_point_pos+1; i<len; i++){			//parse fractional part of number
+		pos_div(tmp1, tmp2, res);
+		byte_to_number(tmp2, 10, 0);							//reset tmp2 to 10
+		memcpy(tmp1, res, bytes_cnt);
 	}
 	
 	if (is_negative)
 		to_negative(res);
+	return 0;
 }
