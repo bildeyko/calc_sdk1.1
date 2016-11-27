@@ -3,15 +3,11 @@
 #include "fixed_point_test.h"
 #include "calc.h"
 #include "lcd.h"
+#include "timer.h"
 
 void calc();
 
-/*void INT0_INT(void) __interrupt (1)
-{
-	
-} */
-
-/*void setVector(unsigned char xdata * address, void * vector)
+void setVector(unsigned char xdata * address, void * vector)
 {
 	unsigned char xdata * tmpVector;
 	*address = 0x02;
@@ -19,14 +15,11 @@ void calc();
 	*tmpVector = (unsigned char)((unsigned short)vector >> 8);
 	++tmpVector;
 	*tmpVector = (unsigned char) vector;
-}*/
+}
 
-void main(){
-	//TCON = 0x01; // INT0 will be on negative edge
-	//setVector(0x2003, (void *) INT0_INT); 
-	
+void main(){	
 	begin_test();
-	//calc();
+	calc();
 }
 
 void calc() {
@@ -37,7 +30,12 @@ void calc() {
 	state.last_position_1 = 0;
 	state.last_position_2 = 0;
 	
-	InitLCD(); 
+	InitLCD();
+	
+	init_timer_0();
+	setVector(0x200B, (void *) T0_INT); // wait interrupt of Timer 0 overflow
+	ET0 = 1; 
+	EA = 1;
 	
 	while(1) {
 		switch(state.name) {
