@@ -115,6 +115,7 @@ char test_number_from_string(){
 char test_number_from_string2(){
 	byte a;
 	byte b;
+	byte c;
 	
 	write_data(str, '5');
 	write_data(str+1, '6');
@@ -127,7 +128,8 @@ char test_number_from_string2(){
 	number_from_string(result, first, second, str, 6);
 	a = read_data(result+point_pos);
 	b = read_data(result+point_pos+1);
-	return a==0xD2 && b==0x04;
+	c = read_data(result+point_pos-1);
+	return a==0x27 && b==0x16 && c==0x80;
 }
 
 

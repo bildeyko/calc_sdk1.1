@@ -239,7 +239,7 @@ char pos_div(byte xdata *first_number, byte xdata *second_number, byte xdata *re
 			write_data(res + write_offset, tmp);	
 			if (cmp == 0)															//first number is 0 now, return
 				return 0;
-			comp_start = comp_start-1;//j-1;
+			comp_start = j;//j-1;
 		}	
 		shift_right(second_number, 1);
 	}
