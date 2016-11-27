@@ -70,7 +70,8 @@ $(SRC_DIR)/fixed_point_test.c \
 $(SRC_DIR)/mem_ops.c \
 $(SRC_DIR)/kb.c \
 $(SRC_DIR)/lcd.c \
-$(SRC_DIR)/max.c
+$(SRC_DIR)/max.c \
+$(SRC_DIR)/din.c
 
 SIMPLE_OBJ = $(SIMPLE_SRC:.c=.rel)
 
