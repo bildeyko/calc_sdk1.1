@@ -10,7 +10,7 @@ unsigned char get_din(unsigned char n)
 	if(get_dins() & mask) 
 		return 1;
 	else
-	return 0;
+		return 0;
 }
 
 unsigned char get_dins()

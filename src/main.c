@@ -6,8 +6,27 @@
 
 void calc();
 
+/*void INT0_INT(void) __interrupt (1)
+{
+	
+} */
+
+/*void setVector(unsigned char xdata * address, void * vector)
+{
+	unsigned char xdata * tmpVector;
+	*address = 0x02;
+	tmpVector = (unsigned char xdata *)(address + 1);
+	*tmpVector = (unsigned char)((unsigned short)vector >> 8);
+	++tmpVector;
+	*tmpVector = (unsigned char) vector;
+}*/
+
 void main(){
 	//begin_test();
+	
+	//TCON = 0x01; // INT0 will be on negative edge
+	//setVector(0x2003, (void *) INT0_INT); 
+	
 	calc();
 }
 

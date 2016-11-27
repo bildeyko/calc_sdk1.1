@@ -3,6 +3,7 @@
 #include "fixedPoint.h"
 #include "kb.h"
 #include "lcd.h"
+#include "din.h"
 
 #define NUMBER_LEN 4
 
@@ -148,6 +149,16 @@ void do_state_4(state_t * state)
 			}
 		}
 	}
+}
+
+bit scanInput(char *ch)
+{
+	if(get_din(8))
+		Activate_2_kb();
+	else
+		Activate_1_kb();
+	
+	return ScanKBOnce(ch);
 }
 
 char is_numeric(unsigned char ch)
