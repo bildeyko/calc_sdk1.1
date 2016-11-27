@@ -27,11 +27,11 @@ void do_state_initial(state_t * state)
 		{
 			if(is_numeric(ch))
 			{
-				write_data(first_num+state->position, ch);				
+				write_data(first_num+state->length, ch);				
 				LCD_Print(first_num, 0, state->last_position_1);
 				
 				state->name = INPUT_FIRST;
-				state->position += 1;
+				state->length += 1;
 				state->last_position_1 += 1;
 				
 				loop = 0;
@@ -53,22 +53,22 @@ void do_state_1(state_t * state)
 	{
 		if(ScanKBOnce(&ch))
 		{
-			if(is_numeric(ch) && state->position < NUMBER_LEN)
+			if(is_numeric(ch) && state->length < NUMBER_LEN)
 			{
-				write_data(first_num+state->position, ch);
+				write_data(first_num+state->length, ch);
 				LCD_Print(first_num, 0, state->last_position_1);
 				
-				state->position += 1;
+				state->length += 1;
 				state->last_position_1 += 1;
 			}
 			
-			if(state->position == NUMBER_LEN-2)
+			if(state->length == NUMBER_LEN-2)
 				ch = '+';
 			
 			if(is_operation(ch))
 			{
 				state->operation = ch;
-				state->position = 0;
+				state->length = 0;
 				state->name = INPUT_SECOND;
 				
 				loop = 0;
@@ -90,21 +90,21 @@ void do_state_3(state_t * state)
 	{
 		if(ScanKBOnce(&ch))
 		{
-			if(is_numeric(ch) && state->position < NUMBER_LEN)
+			if(is_numeric(ch) && state->length < NUMBER_LEN)
 			{
-				write_data(second_num+state->position, ch);				
+				write_data(second_num+state->length, ch);				
 				LCD_Print(second_num, 1, state->last_position_2);				
 				
-				state->position += 1;
+				state->length += 1;
 				state->last_position_2 += 1;
 			}
 				
-			//if(state->position == NUMBER_LEN)
+			//if(state->length == NUMBER_LEN)
 			//		ch = '=';
 			
 			if(is_equal(ch))
 			{
-				state->position = 0;
+				state->length = 0;
 				state->name = CALCULATE;
 				
 				loop = 0;
@@ -127,10 +127,10 @@ void do_state_4(state_t * state)
 	{
 		if(ScanKBOnce(&ch))
 		{
-			if(is_numeric(ch) && state->position < NUMBER_LEN)
+			if(is_numeric(ch) && state->length < NUMBER_LEN)
 			{
-				write_data(second_num+state->position, ch);				
-				state->position += 1;
+				write_data(second_num+state->length, ch);				
+				state->length += 1;
 				state->name = INPUT_FIRST;
 				
 				loop = 0;
@@ -139,7 +139,7 @@ void do_state_4(state_t * state)
 			if(is_operation(ch))
 			{
 				state->operation = ch;
-				state->position = 0;
+				state->length = 0;
 				state->name = INPUT_SECOND;
 				
 				// 1. move result into first_num 

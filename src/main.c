@@ -15,7 +15,7 @@ void calc() {
 	state_t state;
 	
 	state.name = INITIAL;
-	state.position = 0;
+	state.length = 0;
 	state.last_position_1 = 0;
 	state.last_position_2 = 0;
 	
