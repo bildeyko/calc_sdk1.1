@@ -22,12 +22,11 @@ void calc();
 }*/
 
 void main(){
-	//begin_test();
-	
 	//TCON = 0x01; // INT0 will be on negative edge
 	//setVector(0x2003, (void *) INT0_INT); 
 	
-	calc();
+	begin_test();
+	//calc();
 }
 
 void calc() {
