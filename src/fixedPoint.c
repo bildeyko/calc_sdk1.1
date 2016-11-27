@@ -1,6 +1,5 @@
 #include "fixedPoint.h"
 #include "mem_ops.h"
-#include <string.h>
 
 //DOC
 //Low bytes first
@@ -99,11 +98,11 @@ byte xdata * pos_mul(byte xdata *first_number, byte xdata *second_number, byte x
 byte xdata * mul(byte xdata *first_number, byte xdata *second_number, byte xdata * res){
 	byte neg_res = 0;
 	
-	if (first_number[bytes_cnt-1]&0x7F){ 
+	if (read_data(first_number+bytes_cnt-1)&0x7F){ 
 		neg_res = ~neg_res;
 		to_negative(first_number);
 	}
-	if (second_number[bytes_cnt-1]&0x7F){ 
+	if (read_data(second_number+bytes_cnt-1)&0x7F){ 
 		neg_res = ~neg_res;
 		to_negative(second_number);
 	}
@@ -113,6 +112,7 @@ byte xdata * mul(byte xdata *first_number, byte xdata *second_number, byte xdata
 	return res;
 }
 
+//shift on bit count
 void shift_left(byte xdata *number, byte shift){
 	byte carry = 0, val;
 	char i, read_pos;
@@ -130,7 +130,7 @@ void shift_left(byte xdata *number, byte shift){
 		}
 		else write_data(number+i, 0);
 	}
-	write_data(number, read_data(number+bytes_cnt-1)&0x8F);							//forse set negative bit of number to 0
+	write_data(number+bytes_cnt-1, read_data(number+bytes_cnt-1)&0x8F);							//forse set negative bit of number to 0
 }
 
 void shift_right(byte xdata *number, byte shift){
@@ -149,7 +149,7 @@ void shift_right(byte xdata *number, byte shift){
 		}
 		else write_data(number+i, 0);
 	}
-	write_data(number, read_data(number+bytes_cnt-1)&0x8F);							//forse set negative bit of number to 0
+	write_data(number+bytes_cnt-1, read_data(number+bytes_cnt-1)&0x8F);							//forse set negative bit of number to 0
 }
 
 //byte_pos * 8 + bit_pos - position of highest bit to compare two numbers
@@ -162,13 +162,14 @@ char compare_numbers(byte xdata *first_number, byte xdata *second_number, byte b
 	val2 = read_data(second_number + byte_pos)&(~(0xFF << bit_pos));
 	len -= bit_pos;
 	if (len < 0){																						//compare only len count of bits
-		val1 = val1 & (0xFF<<(-len));		
-		val2 = val2 & (0xFF<<(-len));		
+		val1 = val1 & (0xFF<<(-len-1));		
+		val2 = val2 & (0xFF<<(-len-1));		
 	}
 	if (val1 < val2)
 		return -1;
 	if (val1 > val2)
 		return 1;
+	if (len < 0) return 0;
 
 	
 	for(i = byte_pos; i > 0; i--){
@@ -178,8 +179,8 @@ char compare_numbers(byte xdata *first_number, byte xdata *second_number, byte b
 		val2 = read_data(second_number + i - 1);
 		len -= 8;
 		if (len < 0){																						//compare only len count of bits
-			val1 = val1 & (0xFF<<(-len));		
-			val1 = val1 & (0xFF<<(-len));		
+			val1 = val1 & (0xFF<<(-len-1));		
+			val2 = val2 & (0xFF<<(-len-1));		
 		}
 		if (val1 < val2)
 			return -1;
@@ -217,10 +218,11 @@ char pos_div(byte xdata *first_number, byte xdata *second_number, byte xdata *re
 		tmp2 = tmp2 >> 1;
 	}
 	
-	if (second_byte_pos == 0) return 1;						//INVALID, division to 0
+	if (second_byte_pos == 0 && second_bit_pos == 0) return 1;						//INVALID, division to 0
 	j = (first_byte_pos-second_byte_pos) * 8 + first_bit_pos - second_bit_pos;
-	if (j < 0) 
+	if (j < 0){
 		return 0;																		//second number bigger than first, division result is 0
+	}		
 	for (i=0; i<=(byte)(j>>8); i++){							//shift divider first '1' byte to dividend first '1' byte
 		shift_left(second_number, (byte)j);
 	}
@@ -228,19 +230,24 @@ char pos_div(byte xdata *first_number, byte xdata *second_number, byte xdata *re
 	comp_start = j;
 	for(; j>=0; j--){
 		char cmp;
-		cmp = compare_numbers(first_number, second_number, (byte)(comp_start>>3), (byte)comp_start&0x07, (((int)second_byte_pos)<<3)+second_bit_pos);
+		cmp = compare_numbers(first_number, second_number, (byte)(comp_start>>3), (byte)comp_start&0x07, (((int)second_byte_pos)<<3)+second_bit_pos + tmp);
 		//if divider bigger than dividend write 1 and sub second number from first
 		if (cmp >= 0){				
 			int write_offset = (j-second_bit_pos+(second_byte_pos-point_pos)*8)>>3;
+			if (write_offset < 0) return 0;
 			sub(first_number, second_number, first_number);
 			tmp = (j - second_bit_pos) & 0x07;														//set bit to 1
 			tmp = 1 << tmp;
 			tmp = read_data(res + write_offset) | tmp;			//value to write
 			write_data(res + write_offset, tmp);	
-			if (cmp == 0)															//first number is 0 now, return
-				return 0;
+			//if (cmp == 0)															//first number is 0 now, return
+				//return 0;
 			comp_start = j;//j-1;
+			tmp = 0;
 		}	
+		else{
+			tmp+=1;
+		}
 		shift_right(second_number, 1);
 	}
 	return 0;
@@ -253,11 +260,11 @@ byte xdata * div(byte xdata *first_number, byte xdata *second_number, byte xdata
 	byte neg_res = 0;
 	
 	memset(res, 0, bytes_cnt);
-	if (first_number[bytes_cnt-1]&0x7F){ 
+	if (read_data(first_number+bytes_cnt-1)&0x7F){ 
 		neg_res = ~neg_res;
 		to_negative(first_number);
 	}
-	if (second_number[bytes_cnt-1]&0x7F){ 
+	if (read_data(second_number+bytes_cnt-1)&0x7F){ 
 		neg_res = ~neg_res;
 		to_negative(second_number);
 	}
@@ -285,11 +292,13 @@ byte number_from_string(byte xdata * res, byte xdata * tmp1, byte xdata *tmp2, c
 	byte i=0, val, str_point_pos=len;
 	char is_negative = 0;
 	
+	memset(tmp1, 0, bytes_cnt);
+	memset(tmp2, 0, bytes_cnt);
 	if (read_data(str) == '-') {								//if first symbol is 0, set is_negative = true
 		is_negative = 1;
 		i++;
 	}
-	byte_to_number(tmp1, str[i]-48, 0); 				//initialize number with first numeric symbol of the string
+	byte_to_number(tmp1, read_data(str+i)-48, 0); 				//initialize number with first numeric symbol of the string
 	byte_to_number(tmp2, 10, 0);							  //initialize tmp2 with 10
 	
 	for (i=i+1; i<len; i++){										//parse integer part of number
@@ -312,4 +321,68 @@ byte number_from_string(byte xdata * res, byte xdata * tmp1, byte xdata *tmp2, c
 	if (is_negative)
 		to_negative(res);
 	return 0;
+}
+
+//check number from start_pos to lower bytes
+char not_zero_pos(byte xdata * num, byte start_pos){
+	byte val;
+	
+	start_pos++;
+	do{
+		start_pos--;
+		val = read_data(num+start_pos);
+		if (val!=0){
+			return start_pos;
+		}
+	}
+	while(start_pos > 0);
+	return -1;
+}
+
+void number_to_string(byte xdata * num, byte xdata * tmp1, byte xdata *tmp2, char xdata * str){
+	byte i = 0, mul_cnt = 0;
+	byte val, is_negative = 0;
+	char non_zero_pos;
+
+	memset(tmp1, 0, bytes_cnt);
+	memset(tmp2, 0, bytes_cnt);
+	if (read_data(num+bytes_cnt-1)&0x7F){			//if negative add '-' as first symbol 
+		to_negative(num);
+		write_data(str, '-');
+		i++;
+		is_negative = 1;
+	}
+	
+	byte_to_number(tmp2, 10, 0);
+	while(not_zero_pos(num, point_pos-1)!=-1){						//multiply by 10 until fractional part will not zero 
+		mul(num, tmp2, tmp1);
+		mul_cnt++;
+		memcpy(num, tmp1, bytes_cnt);
+	}
+	shift_right(num, (point_pos)<<3);
+	
+	non_zero_pos = not_zero_pos(num, bytes_cnt-1)+1;
+	while(non_zero_pos!=-1){				//convert shifted basis number to char inside cycle 
+		memset(tmp2, 0, bytes_cnt);
+		write_data(tmp2, 0x0A);
+		val = point_pos;
+		point_pos = 0;								//special hack for succes division for shifted basis 
+		pos_div(num, tmp2, tmp1);
+		point_pos = val;
+		val = read_data(num);
+		if (i == mul_cnt)
+			write_data(str+(i++), '.');		//write dot after fractional part
+		write_data(str+(i++), val+48);
+		non_zero_pos = not_zero_pos(tmp1, non_zero_pos+1);
+		memcpy(num, tmp1, non_zero_pos+1);
+	}
+
+	mul_cnt = is_negative;
+	i--;
+	while (mul_cnt < i) {						//swap char array
+		val = read_data(str+i);
+		write_data(str+(i--), read_data(str+mul_cnt));
+		write_data(str+(mul_cnt++), val);
+	}
+
 }
