@@ -310,7 +310,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath></IncludePath>
+              <IncludePath>.\include_c51</IncludePath>
             </VariousControls>
           </C51>
           <Ax51>
@@ -363,11 +363,6 @@
           <GroupName>Source Group 1</GroupName>
           <Files>
             <File>
-              <FileName>START_AD.A51</FileName>
-              <FileType>2</FileType>
-              <FilePath>.\START_AD.A51</FilePath>
-            </File>
-            <File>
               <FileName>fixed_point_test.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\src\fixed_point_test.h</FilePath>
@@ -401,6 +396,51 @@
               <FileName>mem_ops.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\mem_ops.c</FilePath>
+            </File>
+            <File>
+              <FileName>calc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\calc.c</FilePath>
+            </File>
+            <File>
+              <FileName>kb.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\kb.c</FilePath>
+            </File>
+            <File>
+              <FileName>lcd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\lcd.c</FilePath>
+            </File>
+            <File>
+              <FileName>max.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\max.c</FilePath>
+            </File>
+            <File>
+              <FileName>START_AD.A51</FileName>
+              <FileType>2</FileType>
+              <FilePath>.\src\START_AD.A51</FilePath>
+            </File>
+            <File>
+              <FileName>calc.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\src\calc.h</FilePath>
+            </File>
+            <File>
+              <FileName>kb.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\src\kb.h</FilePath>
+            </File>
+            <File>
+              <FileName>lcd.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\src\lcd.h</FilePath>
+            </File>
+            <File>
+              <FileName>max.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\src\max.h</FilePath>
             </File>
           </Files>
         </Group>

@@ -39,7 +39,18 @@ N Дата     Версия   Автор               Описание
 
 //char KBTable[]="147*2580369#ABCD"; //Таблица символов, соответствующих клавишам
                                    //клавиатуры SDK-1.1
-char KBTable[]="147=2580369.+-*/";
+char KBTable_1[]="147=2580369.+-*/";
+
+/*
+	A - MR
+	B - MC
+	C - C
+	* - M+
+	# - M-
+*/
+char KBTable_2[]="FFF*FFFFFFF#ABCD";
+
+char which_kb = 1;
 
 /*----------------------------------------------------------------------------
                     Функции
@@ -85,8 +96,11 @@ unsigned int i;
                 row = ReadMax(KB) & (0x10 << rownum);
                 if( !row )
                 {
-                    *ch = (KBTable[(colnum<<2) + rownum]);
-                    return 1; //Стабильное нажатие клавиши
+									if(which_kb == 1)
+                    *ch = (KBTable_1[(colnum<<2) + rownum]);
+									if(which_kb == 2)
+                    *ch = (KBTable_2[(colnum<<2) + rownum]);
+                  return 1; //Стабильное нажатие клавиши
                 }
 
             }
@@ -97,4 +111,12 @@ unsigned int i;
     return 0; //Ни одна клавиша не нажата
 }
 
+void Activate_1_kb()
+{
+	which_kb = 1;
+}
 
+void Activate_2_kb()
+{
+	which_kb = 2;
+}

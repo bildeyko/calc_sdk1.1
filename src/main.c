@@ -26,13 +26,13 @@ void calc() {
 			case INITIAL:
 				do_state_initial(&state);
 				break;
-			case FIRST:
+			case INPUT_FIRST:
 				do_state_1(&state);
 				break;
-			case THIRD:
+			case INPUT_SECOND:
 				do_state_3(&state);
 				break;
-			case FOURTH:
+			case CALCULATE:
 				do_state_4(&state);
 				break;
 			default:

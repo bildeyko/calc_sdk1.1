@@ -28,9 +28,9 @@ void do_state_initial(state_t * state)
 			if(is_numeric(ch))
 			{
 				write_data(first_num+state->position, ch);				
-				LCD_print(first_num, 0, state->last_position_1);
+				LCD_Print(first_num, 0, state->last_position_1);
 				
-				state->name = FIRST;
+				state->name = INPUT_FIRST;
 				state->position += 1;
 				state->last_position_1 += 1;
 				
@@ -56,7 +56,7 @@ void do_state_1(state_t * state)
 			if(is_numeric(ch) && state->position < NUMBER_LEN)
 			{
 				write_data(first_num+state->position, ch);
-				LCD_print(first_num, 0, state->last_position_1);
+				LCD_Print(first_num, 0, state->last_position_1);
 				
 				state->position += 1;
 				state->last_position_1 += 1;
@@ -69,7 +69,7 @@ void do_state_1(state_t * state)
 			{
 				state->operation = ch;
 				state->position = 0;
-				state->name = THIRD;
+				state->name = INPUT_SECOND;
 				
 				loop = 0;
 			}
@@ -93,7 +93,7 @@ void do_state_3(state_t * state)
 			if(is_numeric(ch) && state->position < NUMBER_LEN)
 			{
 				write_data(second_num+state->position, ch);				
-				LCD_print(second_num, 1, state->last_position_2);				
+				LCD_Print(second_num, 1, state->last_position_2);				
 				
 				state->position += 1;
 				state->last_position_2 += 1;
@@ -105,7 +105,7 @@ void do_state_3(state_t * state)
 			if(is_equal(ch))
 			{
 				state->position = 0;
-				state->name = FOURTH;
+				state->name = CALCULATE;
 				
 				loop = 0;
 			}
@@ -118,6 +118,10 @@ void do_state_4(state_t * state)
 	unsigned char ch;		
 	char loop;
 	
+	// calculate result
+	
+	
+	
 	loop = 1;
 	while(loop == 1)
 	{
@@ -127,7 +131,7 @@ void do_state_4(state_t * state)
 			{
 				write_data(second_num+state->position, ch);				
 				state->position += 1;
-				state->name = FIRST;
+				state->name = INPUT_FIRST;
 				
 				loop = 0;
 			}
@@ -136,9 +140,11 @@ void do_state_4(state_t * state)
 			{
 				state->operation = ch;
 				state->position = 0;
-				state->name = THIRD;
+				state->name = INPUT_SECOND;
 				
-				// move result into the first operand 
+				// 1. move result into first_num 
+				// 2. clean LCD
+				// 3. print first_num on 0 line
 			}
 		}
 	}

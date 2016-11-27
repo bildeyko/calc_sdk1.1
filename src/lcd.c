@@ -260,7 +260,8 @@ bit t = CurPosCtrl;
     SwitchCurPosControl(t);
 }
 
-void LCD_print(unsigned char* s, bit y, char last_position)
+
+void LCD_Print(unsigned char* s, bit y, char last_position)
 {
 	char x, len = 16, start, offset;
 	unsigned char ch;	
