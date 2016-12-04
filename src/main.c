@@ -27,7 +27,7 @@ void setVector(unsigned char xdata * address, void * vector)
 	*tmpVector = (unsigned char) vector;
 }
 
-void T0_ISR(void) __interrupt 1
+/*void T0_ISR(void) __interrupt 1
 {
 	//global_time++;
 	//TH0 = 0xFC;
@@ -42,13 +42,13 @@ void T0_ISR(void) __interrupt 1
 	
 	//TH0 = 0xDC;
 	//TL0 = 0x00;
-}
+}*/
 
 void main(){	
 	InitSIO(S9600, 0);
-  //Type("Hello!\r\n");
+  Type("Hello!\r\n");
 
-	begin_test();
+	//begin_test();
 	calc();
 }
 
@@ -65,15 +65,15 @@ void calc() {
 	
 	InitLCD();
 	
-	init_timer_0();
-	setVector(0x200B, (void *) T0_ISR); // wait interrupt of Timer 0 overflow
-	ET0 = 1; 
-	EA = 1;
+	//init_timer_0();
+	//setVector(0x200B, (void *) T0_ISR); // wait interrupt of Timer 0 overflow
+	//ET0 = 1; 
+	//EA = 1;
 	
-	while(1)
+	/*while(1)
 	{
 		WriteLED(ledss);
-	}
+	}*/
 	while(1) {
 		//WriteLED(ledss);
 		switch(state.name) {

@@ -34,6 +34,7 @@ N Дата     Версия   Автор               Описание
 ******************************************************************************/
 #include "lcd.h"    //Описания команд (константы)
 #include "max.h"    //Описание портов ПЛИС MAX3064 (3128)
+#include "mem_ops.h"
 
 /*----------------------------------------------------------------------------
             Переменные и флаги
@@ -261,9 +262,10 @@ bit t = CurPosCtrl;
 }
 
 
-void LCD_Print(unsigned char* s, bit y, char last_position)
+void LCD_Print(unsigned char xdata *s, bit y, char last_position)
 {
-	char x, len = 16, start, offset;
+	char x, len = 16, start;
+	char offset, tmp;
 	unsigned char ch;	
 	bit t = CurPosCtrl;
 
@@ -288,7 +290,10 @@ void LCD_Print(unsigned char* s, bit y, char last_position)
         LCD_GotoXY(cur_x,cur_y);
 		
 		if(x >= start)
-			ch = s[offset+x];
+		{
+			tmp = offset+x;
+			ch = read_data(s+tmp);
+		}
 		else
 			ch = ' ';
 		

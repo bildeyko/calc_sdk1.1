@@ -13,14 +13,15 @@ byte xdata *second_tmp = 0x3100;
 byte xdata *result_tmp = 0x3200;
 byte xdata *str_tmp = 0x3300;
 
-//byte xdata *first_str_num = 0x3400;
-//byte xdata *second_str_num = 0x3500;
+unsigned char xdata *first_str_num = 0x3400;
+unsigned char xdata *second_str_num = 0x3500;
 
 byte xdata *first_num = 0x3600;
 byte xdata *second_num = 0x3700;
+byte xdata *result_str = 0x3800;
 
-unsigned char xdata first_str_num[NUMBER_LEN];
-unsigned char xdata second_str_num[NUMBER_LEN];
+//unsigned char xdata first_str_num[NUMBER_LEN];
+//unsigned char xdata second_str_num[NUMBER_LEN];
 
 int ScanKBOnce_test(unsigned char * ch)
 {
@@ -34,6 +35,10 @@ void do_state_initial(state_t * state)
 	char loop;
 	
 	Type("STATE_INITIAL\r\n");
+	
+	mem_set(first_str_num, 0, NUMBER_LEN);
+	mem_set(second_str_num, 0, NUMBER_LEN);
+	
 	loop = 1;
 	while(loop == 1)
 	{
@@ -41,7 +46,7 @@ void do_state_initial(state_t * state)
 		{
 			if(is_numeric(ch))
 			{
-				write_data(first_str_num+state->length, ch);				
+				write_data(first_str_num+state->length, ch);					
 				LCD_Print(first_str_num, 0, state->last_position_1);
 				
 				state->name = INPUT_FIRST;
@@ -78,8 +83,8 @@ void do_state_1(state_t * state)
 			
 			if(is_operation(ch))
 			{
-				//byte_to_number(first_num, 0, 0);
-				//number_from_string(first_num, first_tmp, second_tmp, first_str_num, state->length);
+				byte_to_number(first_num, 0, 0);
+				number_from_string(first_num, first_tmp, second_tmp, first_str_num, state->length);
 				
 				state->operation = ch;
 				state->length = 0;
@@ -145,11 +150,11 @@ void do_state_3(state_t * state)
 			
 			if(is_equal(ch))
 			{
-				//byte_to_number(second_num, 0, 0);
-				//number_from_string(second_num, first_tmp, second_tmp, second_str_num, state->length);
+				byte_to_number(second_num, 0, 0);
+				number_from_string(second_num, first_tmp, second_tmp, second_str_num, state->length);
 				
 				Type("Equel\r\n");
-				state->length = 0;
+				//state->length = 0;
 				state->name = CALCULATE;
 				
 				LCD_Print_char(ch, 0, 1);
@@ -181,14 +186,16 @@ void do_state_4(state_t * state)
 	// calculate result
 	if(state->operation == '+')
 	{
-		//byte_to_number(result_tmp, 0, 0);
-		//add(first_num, second_num, result_tmp);
+		byte_to_number(result_tmp, 0, 0);
+		add(first_num, second_num, result_tmp);
+		number_to_string(result_tmp, first_tmp, second_tmp, result_str);
+		LCD_Print(result_str, 0, 13);
 	}
 	
-	LCD_clean_data(0);
-	LCD_clean_data(1);
+	//LCD_clean_data(0);
+	//LCD_clean_data(1);
 	
-	LCD_Print("RESULT", 0,6);		
+	//LCD_Print("RESULT", 0,6);		
 	
 	loop = 1;
 	while(loop == 1)
