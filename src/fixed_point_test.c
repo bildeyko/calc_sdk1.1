@@ -1,14 +1,17 @@
 #include "fixed_point_test.h"
+#include "SIO.h"
 
-	byte xdata *first = 0x0010;
-	byte xdata *second = 0x0030;
-	byte xdata *result = 0x0050;
-	byte xdata *str = 0x0100;
+	byte xdata *first = 0x3000;
+	byte xdata *second = 0x3100;
+	byte xdata *result = 0x3200;
+	byte xdata *str = 0x3300;
 
 //simple test "add two numbers", returns true if passed successfully
 char test_add(){
 	byte a;
 	byte b;
+	
+		Type("test add started\n");
 	
 	byte_to_number(first, 123, 0);
 	byte_to_number(second, 234, 0);
@@ -30,7 +33,9 @@ char test_sub(){
 	byte_to_number(result, 0, 0);
 	
 	sub(first, second, result);	//must be 357 or 0x165 or 0x6501 (this is in little endian) 
+	Type("123");
 	a = read_data(result+point_pos);
+	Type("123");
 	b = read_data(result+1+point_pos);
 	return a==123 && b==0x00;
 }
@@ -175,16 +180,28 @@ char test_number_to_string3(){
 char begin_test(){
 	char res = 0xFF;
 	
+	Type("tests started\n");
 	res = res && test_add();
+	if (res) Type("test_add() success\r\n");
 	res = res && test_sub();
+		if (res) Type("test_sub() success\r\n");
 	res = res && test_mul();
+		if (res) Type("test_mul() success\r\n");
 	res = res && test_mul_neg();
+		if (res) Type("test_mul_neg() success\r\n");
 	res = res && test_div();
+	if (res) Type("test_div() success\r\n");
 	res = res && test_div_2();
+	if (res) Type("test_div_2() success\r\n");
 	res = res && test_number_from_string();
+	if (res) Type("test_number_from_string() success\r\n");
 	res = res && test_number_from_string2();
+	if (res) Type("test_number_from_string2() success\r\n");
 	res = res && test_number_to_string();
+	if (res) Type("test_number_to_string() success\r\n");
 	res = res && test_number_to_string2();
+	if (res) Type("test_number_to_string2() success\r\n");
 	res = res && test_number_to_string3();
+	if (res) Type("test_number_to_string3() success\r\n");
 	return res;
 }

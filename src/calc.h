@@ -31,7 +31,7 @@ void do_state_2(state_t *);
 void do_state_3(state_t *);
 void do_state_4(state_t *);
 
-bit scanInput(char *ch);
+bit scan_input(char *ch);
 char is_numeric(unsigned char);
 char is_operation(unsigned char);
 char is_equal(unsigned char);

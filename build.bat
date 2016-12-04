@@ -20,27 +20,27 @@ copy .\load.m3p bin\load.m3p
 
 cd src
 
-for %%f in (*.c) do C51 %%f   CODE LARGE WL(0) INCDIR(%inc%) DEBUG OE NOINTVECTOR >> ..\compile.msg
+for %%f in (*.c) do C51 %%f   CODE LARGE WL(0) INCDIR(%inc%) DEBUG OE NOINTVECTOR
 if errorlevel 1 goto ERROR
-for %%f in (*.a51) do A51 %%f >> ..\compile.msg
+for %%f in (*.a51) do A51 %%f
 if errorlevel 1 goto ERROR
 
-move /Y START_AD.obj ..\bin > NUL
+move /Y START_AD.obj ..\bin
 
 echo START_AD.obj > ..\bin\command.lk
 for %%f in (*.obj) do echo ,%%f >> ..\bin\command.lk
-echo to calc_prog CODE(2100H) XDATA(04000H) >> ..\bin\command.lk
+echo to calk CODE(2100H) XDATA(04000H) >> ..\bin\command.lk
 
-move /Y *.lst ..\lst > NUL
-move /Y *.obj ..\bin > NUL
+move /Y *.lst ..\lst
+move /Y *.obj ..\bin
 cd ..\bin
 
-BL51 @command.lk > ..\link.msg
+BL51 @command.lk
 
-OH51 calc_prog
+OH51 calk
 if errorlevel 1 goto ERROR
 
-m3p.exe hb166 calc_prog.hex  calc_prog.bin bye
+m3p.exe hb166 calk.hex  calk.bin bye
 m3p.exe lfile load.m3p
 goto OK
 

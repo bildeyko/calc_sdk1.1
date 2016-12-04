@@ -30,6 +30,10 @@
 Приводятся наборы тестов, позволяющие сделать вывод о том, что ИУС функционирует согласно требованиям (действия по тестированию и ожидаемые результаты).
 
 ### Сборка  
+#### Только заливка hex файла, собранного в Keil  
+1. Keil должен был создать директорию Objects, в которой лежит calk.hex  
+2. Запустить install.bat  
+
 #### Компилятор С51  
 1. В build.bat указать правльный путь к компилятору С51 - переменная CDIR  
 2. Запустить build.bat  
@@ -46,14 +50,14 @@
 OBJECT TO HEX FILE CONVERTER OH51 V2.7.0.0
 COPYRIGHT KEIL ELEKTRONIK GmbH 1991 - 2001
 
-GENERATING INTEL HEX FILE: calc_prog.hex
+GENERATING INTEL HEX FILE: calk.hex
 
 OBJECT TO HEX CONVERSION COMPLETED.
 ** M3P v 1.8.5a
 
 Hex->Bin конвертер, версия для ТОЛЬКО для одного сегмента 64К!
-Файл HEX       : calc_prog.hex
-Файл BIN       : calc_prog.bin
+Файл HEX       : calk.hex
+Файл BIN       : calk.bin
 Начальный адрес: 0x2100** M3P v 1.8.5a
 Open script file load.m3p
 

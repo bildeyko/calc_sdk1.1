@@ -298,3 +298,30 @@ void LCD_Print(unsigned char* s, bit y, char last_position)
 	
 	SwitchCurPosControl(t);
 }
+
+void LCD_Print_char(unsigned char ch, unsigned char x, bit y)
+{
+	bit t = CurPosCtrl;
+	cur_x = x;
+	cur_y = y;
+	
+	SwitchCurPosControl(1);
+	
+	LCD_GotoXY(cur_x,cur_y);
+	WriteMax(DATA_IND,ch);
+  Strobe(0xC);
+	
+	SwitchCurPosControl(t);
+}
+
+void LCD_clean_data()
+{
+	char x,y;
+	for(y=0;y<2;y++)
+	{
+		for(x=1;x<16;x++)
+		{
+			LCD_Print_char(' ', x, y);
+		}
+	}
+}

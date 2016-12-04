@@ -3,11 +3,14 @@
 #include "fixed_point_test.h"
 #include "calc.h"
 #include "lcd.h"
-#include "timer.h"
+#include "sio.h"
+
+//#include "timer.h"
+#include "aduc812.h"
 
 void calc();
 
-void setVector(unsigned char xdata * address, void * vector)
+/*void setVector(unsigned char xdata * address, void * vector)
 {
 	unsigned char xdata * tmpVector;
 	*address = 0x02;
@@ -15,15 +18,20 @@ void setVector(unsigned char xdata * address, void * vector)
 	*tmpVector = (unsigned char)((unsigned short)vector >> 8);
 	++tmpVector;
 	*tmpVector = (unsigned char) vector;
-}
+}*/
 
 void main(){	
-	begin_test();
+	InitSIO(S9600, 0);
+  Type("Hello!\r\n");
+
+	//begin_test();
 	calc();
 }
 
 void calc() {
 	state_t state;
+	
+	Type("Calc()\r\n");
 	
 	state.name = INITIAL;
 	state.length = 0;
@@ -32,10 +40,10 @@ void calc() {
 	
 	InitLCD();
 	
-	init_timer_0();
-	setVector(0x200B, (void *) T0_INT); // wait interrupt of Timer 0 overflow
-	ET0 = 1; 
-	EA = 1;
+	//init_timer_0();
+	//setVector(0x200B, (void *) T0_INT); // wait interrupt of Timer 0 overflow
+	//ET0 = 1; 
+	//EA = 1;
 	
 	while(1) {
 		switch(state.name) {

@@ -1,7 +1,7 @@
 # ---------------------------------------------------------------------------
 # Имя проекта
 
-NAME	= calc_prog
+NAME	= calk
 
 # Настройки компилятора и линкера
 
@@ -71,7 +71,8 @@ $(SRC_DIR)/mem_ops.c \
 $(SRC_DIR)/kb.c \
 $(SRC_DIR)/lcd.c \
 $(SRC_DIR)/max.c \
-$(SRC_DIR)/din.c
+$(SRC_DIR)/din.c \
+$(SRC_DIR)/sio.c
 
 SIMPLE_OBJ = $(SIMPLE_SRC:.c=.rel)
 
