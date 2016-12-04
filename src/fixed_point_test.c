@@ -139,7 +139,7 @@ char test_number_from_string2(){
 
 char test_number_to_string(){
 	byte a, b, c, d;
-	memset(result, 0, bytes_cnt);
+	mem_set(result, 0, bytes_cnt);
 	byte_to_number(result, 178, 0);
 	//write_data(result+point_pos+1, 0xAA);
 	number_to_string(result, first, second, str);
@@ -152,7 +152,7 @@ char test_number_to_string(){
 
 char test_number_to_string2(){
 	byte a, b, c, d;
-	memset(result, 0, bytes_cnt);
+	mem_set(result, 0, bytes_cnt);
 	byte_to_number(result, 52, 0);
 	write_data(result+point_pos-1, 0x80);
 	number_to_string(result, first, second, str);
@@ -165,7 +165,7 @@ char test_number_to_string2(){
 
 char test_number_to_string3(){
 	byte a, b, c, d;
-	memset(result, 0, bytes_cnt);
+	mem_set(result, 0, bytes_cnt);
 	byte_to_number(result, 67, 0);
 	write_data(result+point_pos-1, 0xA0);
 	number_to_string(result, first, second, str);

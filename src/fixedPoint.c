@@ -75,7 +75,7 @@ byte xdata * pos_mul(byte xdata *first_number, byte xdata *second_number, byte x
 	unsigned int r;
 	byte first, second;
 	
-	memset(res, 0, bytes_cnt);
+	mem_set(res, 0, bytes_cnt);
 	for (i = 0; i < bytes_cnt; i++){
 		for (j = 0; j < bytes_cnt; j++){
 			first = read_data(first_number+i);
@@ -195,7 +195,7 @@ char pos_div(byte xdata *first_number, byte xdata *second_number, byte xdata *re
 	int j, comp_start;
 	byte first_byte_pos=0, second_byte_pos=0, first_bit_pos = 0, second_bit_pos = 0, tmp, tmp2;
 	
-	memset(res, 0, bytes_cnt);									//forse set result to 0
+	mem_set(res, 0, bytes_cnt);									//forse set result to 0
 	//this two "for" cycles finds start positions for div operation
 	for(i=0; i<bytes_cnt; i++){												
 		if (read_data(first_number+i)){
@@ -259,7 +259,7 @@ char pos_div(byte xdata *first_number, byte xdata *second_number, byte xdata *re
 byte xdata * div(byte xdata *first_number, byte xdata *second_number, byte xdata * res){
 	byte neg_res = 0;
 	
-	memset(res, 0, bytes_cnt);
+	mem_set(res, 0, bytes_cnt);
 	if (read_data(first_number+bytes_cnt-1)&0x7F){ 
 		neg_res = ~neg_res;
 		to_negative(first_number);
@@ -292,8 +292,8 @@ byte number_from_string(byte xdata * res, byte xdata * tmp1, byte xdata *tmp2, c
 	byte i=0, val, str_point_pos=len;
 	char is_negative = 0;
 	
-	memset(tmp1, 0, bytes_cnt);
-	memset(tmp2, 0, bytes_cnt);
+	mem_set(tmp1, 0, bytes_cnt);
+	mem_set(tmp2, 0, bytes_cnt);
 	if (read_data(str) == '-') {								//if first symbol is 0, set is_negative = true
 		is_negative = 1;
 		i++;
@@ -309,13 +309,13 @@ byte number_from_string(byte xdata * res, byte xdata * tmp1, byte xdata *tmp2, c
 		}
 		mul(tmp1, tmp2, res);											//multiply to 10, store result to res
 		add_byte(res, point_pos, val-48);					//add next symbol value to res
-		memcpy(tmp1, res, bytes_cnt);							//copy result to tmp1 for next multiply
+		mem_cpy(tmp1, res, bytes_cnt);							//copy result to tmp1 for next multiply
 	}
 	
 	for (i = str_point_pos+1; i<len; i++){			//parse fractional part of number
 		pos_div(tmp1, tmp2, res);
 		byte_to_number(tmp2, 10, 0);							//reset tmp2 to 10
-		memcpy(tmp1, res, bytes_cnt);
+		mem_cpy(tmp1, res, bytes_cnt);
 	}
 	
 	if (is_negative)
@@ -344,8 +344,8 @@ void number_to_string(byte xdata * num, byte xdata * tmp1, byte xdata *tmp2, cha
 	byte val, is_negative = 0;
 	char non_zero_pos;
 
-	memset(tmp1, 0, bytes_cnt);
-	memset(tmp2, 0, bytes_cnt);
+	mem_set(tmp1, 0, bytes_cnt);
+	mem_set(tmp2, 0, bytes_cnt);
 	if (read_data(num+bytes_cnt-1)&0x7F){			//if negative add '-' as first symbol 
 		to_negative(num);
 		write_data(str, '-');
@@ -357,13 +357,13 @@ void number_to_string(byte xdata * num, byte xdata * tmp1, byte xdata *tmp2, cha
 	while(not_zero_pos(num, point_pos-1)!=-1){						//multiply by 10 until fractional part will not zero 
 		mul(num, tmp2, tmp1);
 		mul_cnt++;
-		memcpy(num, tmp1, bytes_cnt);
+		mem_cpy(num, tmp1, bytes_cnt);
 	}
 	shift_right(num, (point_pos)<<3);
 	
 	non_zero_pos = not_zero_pos(num, bytes_cnt-1)+1;
 	while(non_zero_pos!=-1){				//convert shifted basis number to char inside cycle 
-		memset(tmp2, 0, bytes_cnt);
+		mem_set(tmp2, 0, bytes_cnt);
 		write_data(tmp2, 0x0A);
 		val = point_pos;
 		point_pos = 0;								//special hack for succes division for shifted basis 
@@ -374,7 +374,7 @@ void number_to_string(byte xdata * num, byte xdata * tmp1, byte xdata *tmp2, cha
 			write_data(str+(i++), '.');		//write dot after fractional part
 		write_data(str+(i++), val+48);
 		non_zero_pos = not_zero_pos(tmp1, non_zero_pos+1);
-		memcpy(num, tmp1, non_zero_pos+1);
+		mem_cpy(num, tmp1, non_zero_pos+1);
 	}
 
 	mul_cnt = is_negative;

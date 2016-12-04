@@ -46,9 +46,9 @@ void T0_ISR(void) __interrupt 1
 
 void main(){	
 	InitSIO(S9600, 0);
-  Type("Hello!\r\n");
+  //Type("Hello!\r\n");
 
-	//begin_test();
+	begin_test();
 	calc();
 }
 

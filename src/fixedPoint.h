@@ -1,5 +1,4 @@
 #include "mem_ops.h"
-#include <string.h>
 
 #ifndef __FIXED_POINT_H__
 #define __FIXED_POINT_H__
