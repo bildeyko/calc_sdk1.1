@@ -35,6 +35,6 @@ extern void LCD_Type(char *s);
 
 extern void LCD_Print(unsigned char* s, bit y, char last_position);
 extern void LCD_Print_char(unsigned char ch, unsigned char x, bit y);
-extern void LCD_clean_data();
+extern void LCD_clean_data(bit y);
 
 #endif //_LCD_H

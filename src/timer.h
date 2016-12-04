@@ -1,8 +1,10 @@
 #ifndef _TIMER_H
 #define _TIMER_H
 
-extern void init_timer_0();
-extern void T0_INT(void);
+unsigned char ledss = 0x01; 
+
+void init_timer_0();
+//void T0_ISR(void) __interrupt 1;
 
 unsigned long get_ms_counter();
 void clear_ms_counter();

@@ -45,10 +45,10 @@ char KBTable_1[]="147=2580369.+-*/";
 	A - MR
 	B - MC
 	C - C
-	* - M+
-	# - M-
+	M - M+
+	N - M-
 */
-char KBTable_2[]="FFF*FFFFFFF#ABCD";
+char KBTable_2[]="FFFMFFFFFFFNABCD";
 
 char which_kb = 1;
 

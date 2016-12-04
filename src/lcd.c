@@ -314,14 +314,11 @@ void LCD_Print_char(unsigned char ch, unsigned char x, bit y)
 	SwitchCurPosControl(t);
 }
 
-void LCD_clean_data()
+void LCD_clean_data(bit y)
 {
-	char x,y;
-	for(y=0;y<2;y++)
+	char x;
+	for(x=1;x<16;x++)
 	{
-		for(x=1;x<16;x++)
-		{
-			LCD_Print_char(' ', x, y);
-		}
+		LCD_Print_char(' ', x, y);
 	}
 }

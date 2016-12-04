@@ -9,7 +9,7 @@ typedef enum {
 	INPUT_FIRST,
 	INPUT_SECOND,
 	CALCULATE,
-	FOURTH
+	ADD_SUB_MEM
 } state_name_t;
 
 typedef struct state
