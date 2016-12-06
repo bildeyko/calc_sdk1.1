@@ -294,13 +294,17 @@ byte number_from_string(byte xdata * res, byte xdata * tmp1, byte xdata *tmp2, c
 	
 	mem_set(tmp1, 0, bytes_cnt);
 	mem_set(tmp2, 0, bytes_cnt);
+	mem_set(res, 0, bytes_cnt);
 	if (read_data(str) == '-') {								//if first symbol is 0, set is_negative = true
 		is_negative = 1;
 		i++;
 	}
 	byte_to_number(tmp1, read_data(str+i)-48, 0); 				//initialize number with first numeric symbol of the string
 	byte_to_number(tmp2, 10, 0);							  //initialize tmp2 with 10
-	
+	if (len == 1){
+		mem_cpy(res, tmp1, bytes_cnt);	
+		return 0;
+	}
 	for (i=i+1; i<len; i++){										//parse integer part of number
 		val = read_data(str+i);
 		if (val == '.'){													//if symbol is '.' store position and break operation
@@ -339,13 +343,15 @@ char not_zero_pos(byte xdata * num, byte start_pos){
 	return -1;
 }
 
-void number_to_string(byte xdata * num, byte xdata * tmp1, byte xdata *tmp2, char xdata * str){
+void number_to_string(byte xdata * num, byte xdata * tmp1, byte xdata *tmp2, char xdata * str, byte str_max_len){
 	byte i = 0, mul_cnt = 0;
 	byte val, is_negative = 0;
 	char non_zero_pos;
 
 	mem_set(tmp1, 0, bytes_cnt);
 	mem_set(tmp2, 0, bytes_cnt);
+	mem_set(str, 0, str_max_len);
+	
 	if (read_data(num+bytes_cnt-1)&0x7F){			//if negative add '-' as first symbol 
 		to_negative(num);
 		write_data(str, '-');
@@ -363,6 +369,7 @@ void number_to_string(byte xdata * num, byte xdata * tmp1, byte xdata *tmp2, cha
 	
 	non_zero_pos = not_zero_pos(num, bytes_cnt-1)+1;
 	while(non_zero_pos!=-1){				//convert shifted basis number to char inside cycle 
+		if(i > str_max_len) break;
 		mem_set(tmp2, 0, bytes_cnt);
 		write_data(tmp2, 0x0A);
 		val = point_pos;

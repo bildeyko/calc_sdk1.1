@@ -6,7 +6,7 @@
 #include "sio.h"
 #include "max.h"
 
-#include "timer.h"
+//#include "timer.h"
 #include "aduc812.h"
 
 void calc();
@@ -48,7 +48,7 @@ void main(){
 	InitSIO(S9600, 0);
   Type("Hello!\r\n");
 
-	//begin_test();
+	begin_test();
 	calc();
 }
 
