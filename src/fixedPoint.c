@@ -218,7 +218,8 @@ char pos_div(byte xdata *first_number, byte xdata *second_number, byte xdata *re
 		tmp2 = tmp2 >> 1;
 	}
 	
-	if (second_byte_pos == 0 && second_bit_pos == 0) return 1;						//INVALID, division to 0
+	if (second_byte_pos == 0 && second_bit_pos == 0) 
+		return 1;						//INVALID, division to 0
 	j = (first_byte_pos-second_byte_pos) * 8 + first_bit_pos - second_bit_pos;
 	if (j < 0){
 		return 0;																		//second number bigger than first, division result is 0

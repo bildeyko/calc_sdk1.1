@@ -19,3 +19,8 @@ unsigned char get_dins()
 	res = ReadMax(EXT_LO);	
 	return res;
 }
+
+void write_led(unsigned char value)
+{
+	WriteMax(7, value);
+}
