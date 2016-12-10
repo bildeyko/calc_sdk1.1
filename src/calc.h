@@ -35,5 +35,9 @@ bit scan_input(char *ch);
 char is_numeric(unsigned char);
 char is_operation(unsigned char);
 char is_equal(unsigned char);
+unsigned char number_len(unsigned char xdata *s);
+
+void memory_add(unsigned char xdata *n);
+void memory_sub(unsigned char xdata *n);
 
 #endif //_CALC_H

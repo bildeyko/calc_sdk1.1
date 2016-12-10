@@ -48,7 +48,7 @@ void main(){
 	InitSIO(S9600, 0);
   Type("Hello!\r\n");
 
-	begin_test();
+	//begin_test();
 	calc();
 }
 
