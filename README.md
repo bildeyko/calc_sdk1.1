@@ -9,6 +9,10 @@
 - Документация и спецификация SDK-1.1 [[link](http://embedded.ifmo.ru/index.php/support/sdk-11)]
 - Методическое пособие по SDK-1.1 от УРФУ [[link](http://study.urfu.ru/Aid/Publication/12118/1/Kovalev.pdf)]
 
+О Timer 2:   
+- официальная документация (с. 33-34) [[link](http://www.analog.com/media/en/technical-documentation/data-sheets/ADUC812.pdf)]
+- другие источники [[link](http://de.ifmo.ru/bk_netra/page.php?index=66&layer=1&tutindex=25)] [[link](http://nahid-embeddded.blogspot.ru/p/blog-page.html)]  
+
 ### Этапы
 
 #### Этап 1. Разработка технического задания.
