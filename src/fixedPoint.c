@@ -258,7 +258,7 @@ char pos_div(byte xdata *first_number, byte xdata *second_number, byte xdata *re
 //Invert number to positive value, if it is negative
 //Convert result to negative value, if only one input number is negative
 byte xdata * div(byte xdata *first_number, byte xdata *second_number, byte xdata * res){
-	byte neg_res = 0;
+	byte neg_res = 0, div_res;
 	
 	mem_set(res, 0, bytes_cnt);
 	if (read_data(first_number+bytes_cnt-1)&0x7F){ 
@@ -269,10 +269,10 @@ byte xdata * div(byte xdata *first_number, byte xdata *second_number, byte xdata
 		neg_res = ~neg_res;
 		to_negative(second_number);
 	}
-	pos_div(first_number, second_number, res);
+	div_res = pos_div(first_number, second_number, res);
 	if (neg_res)
 		to_negative(res);
-	return res;
+	return div_res;
 }
 
 
