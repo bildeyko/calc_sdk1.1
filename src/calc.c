@@ -58,6 +58,7 @@ void do_state_initial(state_t * state)
 	mem_set(second_str_num, 0, NUMBER_LEN);
 	mem_set(memory, 0, NUMBER_LEN);
 	timer_active = 0;
+	state->point = 0;
 	write_led(0x00);
 	
 	loop = 1;
@@ -107,6 +108,11 @@ void do_state_1(state_t * state)
 			
 			if(is_numeric(ch) && state->length < NUMBER_LEN)
 			{
+				if(ch == '.' && state->point == 1)
+					continue;
+				if(ch == '.' && state->point == 0)
+					state->point = 1;
+				
 				if(is_mem)
 				{					
 					state->length = 0;
@@ -130,6 +136,7 @@ void do_state_1(state_t * state)
 				
 				state->operation = ch;
 				state->length = 0;
+				state->point = 0;
 				//state->last_position_2 = 0; // ??? 
 				state->name = INPUT_SECOND;
 				
@@ -194,6 +201,7 @@ void do_state_1(state_t * state)
 				
 				state->last_position_1 = 0;
 				state->length = 0;
+				state->point = 0;
 				state->name = INPUT_FIRST;
 				loop = 0;
 			}
@@ -251,6 +259,11 @@ void do_state_3(state_t * state)
 			
 			if(is_numeric(ch) && state->length < NUMBER_LEN)
 			{
+				if(ch == '.' && state->point == 1)
+					continue;
+				if(ch == '.' && state->point == 0)
+					state->point = 1;
+				
 				if(is_mem)
 				{					
 					state->length = 0;
@@ -305,6 +318,7 @@ void do_state_3(state_t * state)
 				
 				state->last_position_2 = 0;
 				state->length = 0;
+				state->point = 0;
 				state->name = INPUT_SECOND;
 				loop = 0;
 			}

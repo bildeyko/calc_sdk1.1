@@ -62,6 +62,7 @@ void calc() {
 	state.length = 0;
 	state.last_position_1 = 0;
 	state.last_position_2 = 0;
+	state.point = 0;
 	
 	InitLCD();
 	

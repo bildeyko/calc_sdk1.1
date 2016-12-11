@@ -16,6 +16,7 @@ typedef struct state
 	state_name_t name;
 	unsigned char length; // length of current input string
 	unsigned char operation; // operation char
+	char point;
 	
 	char last_position_1; // index of last printed digital in 1st number
 	char last_position_2; // index of last printed digital in 2nd number
