@@ -262,7 +262,7 @@ bit t = CurPosCtrl;
 }
 
 
-void LCD_Print(unsigned char xdata *s, bit y, char last_position)
+void LCD_Print(unsigned char xdata *s, bit y, char last_position, char lenght)
 {
 	char x, len = 16, start;
 	char offset, tmp;
@@ -279,7 +279,7 @@ void LCD_Print(unsigned char xdata *s, bit y, char last_position)
 	else
 	{
 		start = 1;
-		offset = last_position - len - 1;
+		offset = last_position - len + 1;
 	}
 	
 	cur_y = y;
@@ -290,9 +290,12 @@ void LCD_Print(unsigned char xdata *s, bit y, char last_position)
         LCD_GotoXY(cur_x,cur_y);
 		
 		if(x >= start)
-		{
+		{			
 			tmp = offset+x;
-			ch = read_data(s+tmp);
+			if(tmp > lenght)
+				ch = ' ';
+			else
+				ch = read_data(s+tmp);
 		}
 		else
 			ch = ' ';

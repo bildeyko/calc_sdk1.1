@@ -48,7 +48,7 @@ char KBTable_1[]="147=2580369.+-*/";
 	M - M+
 	N - M-
 */
-char KBTable_2[]="FFFMFFFFFFFNABCD";
+char KBTable_2[]="LFFMRFFFFFFNABCF";
 
 char which_kb = 1;
 

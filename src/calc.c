@@ -9,7 +9,7 @@
 
 #define NUMBER_LEN 32
 
-#define RESET_TIME 10000 //ms
+#define RESET_TIME 60000 //ms
 
 byte xdata *first_tmp = 0x3000;
 byte xdata *second_tmp = 0x3100;
@@ -59,6 +59,8 @@ void do_state_initial(state_t * state)
 	mem_set(memory, 0, NUMBER_LEN);
 	timer_active = 0;
 	state->point = 0;
+	state->length_1 = 0;
+	state->length_2 = 0;
 	write_led(0x00);
 	
 	loop = 1;
@@ -71,7 +73,7 @@ void do_state_initial(state_t * state)
 				LCD_Clear();
 				
 				write_data(first_str_num+state->length, ch);					
-				LCD_Print(first_str_num, 0, state->last_position_1);
+				LCD_Print(first_str_num, 0, state->last_position_1, state->length);
 				
 				state->name = INPUT_FIRST;
 				state->length += 1;
@@ -91,6 +93,8 @@ void do_state_1(state_t * state)
 	unsigned char ch;		
 	char loop;
 	bit is_mem = 0;
+	
+	mem_set(second_str_num, 0, NUMBER_LEN);
 	
 	Type("STATE_1\r\n");
 	loop = 1;
@@ -123,7 +127,7 @@ void do_state_1(state_t * state)
 				}
 				
 				write_data(first_str_num+state->length, ch);
-				LCD_Print(first_str_num, 0, state->last_position_1);
+				LCD_Print(first_str_num, 0, state->last_position_1, state->length);
 				
 				state->length += 1;
 				state->last_position_1 += 1;
@@ -131,9 +135,10 @@ void do_state_1(state_t * state)
 			
 			if(is_operation(ch))
 			{				
-				byte_to_number(first_num, 0, 0);
-				number_from_string(first_num, first_tmp, second_tmp, first_str_num, state->length);
+				//byte_to_number(first_num, 0, 0);
+				//number_from_string(first_num, first_tmp, second_tmp, first_str_num, state->length);
 				
+				state->length_1 = state->length;
 				state->operation = ch;
 				state->length = 0;
 				state->point = 0;
@@ -150,6 +155,7 @@ void do_state_1(state_t * state)
 			{
 				Type("M+ or M-\r\n");
 				
+				ET2 = 1;
 				mem_set(first_num, 0, NUMBER_LEN);
 				number_from_string(first_num, first_tmp, second_tmp, first_str_num, state->length);
 				if(ch == 'M')
@@ -163,6 +169,7 @@ void do_state_1(state_t * state)
 					Type("M-\r\n");
 					memory_sub(first_num);
 				}
+				ET2 = 0;
 				
 				LCD_Print_char('M',0,0);
 				
@@ -177,7 +184,7 @@ void do_state_1(state_t * state)
 				mem_set(first_str_num, 0, NUMBER_LEN);
 				mem_cpy(memory_tmp, memory, NUMBER_LEN);
 				number_to_string(memory_tmp, first_tmp, second_tmp, first_str_num, 100);
-				LCD_Print(first_str_num, 0, number_len(first_str_num)-1);				
+				LCD_Print(first_str_num, 0, number_len(first_str_num)-1, number_len(first_str_num));				
 				
 				state->length = number_len(first_str_num);
 				state->last_position_1 = state->length - 1;
@@ -199,11 +206,28 @@ void do_state_1(state_t * state)
 				
 				LCD_clean_data(0);
 				
+				mem_set(first_str_num, 0, NUMBER_LEN);
 				state->last_position_1 = 0;
 				state->length = 0;
 				state->point = 0;
 				state->name = INPUT_FIRST;
 				loop = 0;
+			}
+			
+			if(ch == 'L' || ch == 'R')
+			{
+				if(ch == 'L')
+				{
+					state->last_position_1++;
+					state->last_position_2++;
+				}
+				if(ch == 'R')
+				{
+					state->last_position_1--;
+					state->last_position_2--;
+				}
+				LCD_Print(first_str_num, 0, state->last_position_1-1, state->length-1);
+				LCD_Print(second_str_num, 1, state->last_position_2, number_len(second_str_num)-1);
 			}
 		}
 		else
@@ -274,7 +298,7 @@ void do_state_3(state_t * state)
 				}				
 				
 				write_data(second_str_num + state->length, ch);				
-				LCD_Print(second_str_num, 1, state->last_position_2);				
+				LCD_Print(second_str_num, 1, state->last_position_2, state->length);				
 				
 				state->length += 1;
 				state->last_position_2 += 1;
@@ -282,13 +306,13 @@ void do_state_3(state_t * state)
 			
 			if(is_equal(ch))
 			{
-				byte_to_number(second_num, 0, 0);
-				number_from_string(second_num, first_tmp, second_tmp, second_str_num, state->length);
-				
+				//byte_to_number(second_num, 0, 0);
+				//number_from_string(second_num, first_tmp, second_tmp, second_str_num, state->length);
 				Type("Equel\r\n");
+				
+				state->length_2 = state->length;				
 				//state->length = 0;
 				state->name = CALCULATE;
-				
 				LCD_Print_char(ch, 0, 1);
 				
 				loop = 0;
@@ -302,7 +326,7 @@ void do_state_3(state_t * state)
 				mem_set(second_str_num, 0, NUMBER_LEN);
 				mem_cpy(memory_tmp, memory, NUMBER_LEN);
 				number_to_string(memory_tmp, first_tmp, second_tmp, second_str_num, 100);
-				LCD_Print(second_str_num, 1, number_len(second_str_num)-1);				
+				LCD_Print(second_str_num, 1, number_len(second_str_num)-1, number_len(second_str_num));				
 				
 				state->length = number_len(second_str_num);
 				state->last_position_2 = state->length - 1;
@@ -315,12 +339,28 @@ void do_state_3(state_t * state)
 				Type("C\r\n");
 				
 				LCD_clean_data(1);
-				
+				mem_set(second_str_num, 0, NUMBER_LEN);
 				state->last_position_2 = 0;
 				state->length = 0;
 				state->point = 0;
 				state->name = INPUT_SECOND;
 				loop = 0;
+			}
+			
+			if(ch == 'L' || ch == 'R')
+			{
+				if(ch == 'L')
+				{
+					state->last_position_1++;
+					state->last_position_2++;
+				}
+				if(ch == 'R')
+				{
+					state->last_position_1--;
+					state->last_position_2--;
+				}
+				LCD_Print(first_str_num, 0, state->last_position_1-1, number_len(first_str_num)-1);
+				LCD_Print(second_str_num, 1, state->last_position_2-1, state->length-1);
 			}
 		}
 		else
@@ -360,6 +400,12 @@ void do_state_4(state_t * state)
 	ET2 = 1;
 	
 	// calculate result
+	byte_to_number(first_num, 0, 0);
+	number_from_string(first_num, first_tmp, second_tmp, first_str_num, state->length_1);
+	
+	byte_to_number(second_num, 0, 0);
+	number_from_string(second_num, first_tmp, second_tmp, second_str_num, state->length_2);
+	
 	byte_to_number(result_tmp, 0, 0);
 	if(state->operation == '+')	
 		add(first_num, second_num, result_tmp);
@@ -375,7 +421,8 @@ void do_state_4(state_t * state)
 		}
 			
 	number_to_string(result_tmp, first_tmp, second_tmp, result_str, 100);
-	LCD_Print(result_str, 0, number_len(result_str)-1);
+	state->last_position_1 = number_len(result_str);
+	LCD_Print(result_str, 0, state->last_position_1-1, number_len(result_str));
 	
 	ET2 = 0;
 	
@@ -399,10 +446,13 @@ void do_state_4(state_t * state)
 			if(is_numeric(ch) && state->length < NUMBER_LEN)
 			{
 				state->length = 0;
-				state->last_position_1 = 0;				
+				state->last_position_1 = 0;		
+
+				mem_set(first_str_num, 0, NUMBER_LEN);
+				mem_set(second_str_num, 0, NUMBER_LEN);
 				
 				write_data(first_str_num+state->length, ch);	
-				LCD_Print(first_str_num, 0, state->last_position_1);
+				LCD_Print(first_str_num, 0, state->last_position_1, state->length);
 				state->length += 1;
 				state->last_position_1 += 1;
 				state->last_position_2 = 0;
@@ -435,6 +485,7 @@ void do_state_4(state_t * state)
 			{
 				Type("M+ or M-\r\n");
 				
+				ET2 = 1;
 				// save result into the memory
 				mem_set(first_num, 0, NUMBER_LEN);
 				number_from_string(first_num, first_tmp, second_tmp, result_str, number_len(result_str));
@@ -449,8 +500,25 @@ void do_state_4(state_t * state)
 					Type("M-\r\n");
 					memory_sub(first_num);
 				}
+				ET2 = 0;
 				
 				LCD_Print_char('M',0,0);
+			}
+			
+			if(ch == 'L' || ch == 'R')
+			{
+				if(ch == 'L')
+				{
+					state->last_position_1++;
+					state->last_position_2++;
+				}
+				if(ch == 'R')
+				{
+					state->last_position_1--;
+					state->last_position_2--;
+				}
+				LCD_Print(result_str, 0, state->last_position_1-1, number_len(result_str)-1);
+				//LCD_Print(second_str_num, 1, state->last_position_2-1, state->length-1);
 			}
 		}
 		else

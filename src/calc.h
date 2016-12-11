@@ -15,6 +15,8 @@ typedef struct state
 {
 	state_name_t name;
 	unsigned char length; // length of current input string
+	unsigned char length_1; // temporary length of 1st number
+	unsigned char length_2; // temporary length of 2nd number
 	unsigned char operation; // operation char
 	char point;
 	
